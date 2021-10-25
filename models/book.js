@@ -11,7 +11,7 @@ let bookModel = mongoose.Schema(
         Genre: String
     },
     {
-        collection: "books"
+        collection: "favourite_books"
     }
 );
 

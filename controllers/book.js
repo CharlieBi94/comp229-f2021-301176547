@@ -44,7 +44,9 @@ module.exports.details = (req, res, next) => {
 // Renders the Add form using the add_edit.ejs template
 module.exports.displayAddPage = (req, res, next) => {
     
-    // ADD YOUR CODE HERE        
+    // ADD YOUR CODE HERE
+    //pushing an empty book object since we are adding an new book
+    res.render('book/add_edit', {title: 'Add Book', book: ''});
 
 }
 
@@ -52,6 +54,24 @@ module.exports.displayAddPage = (req, res, next) => {
 module.exports.processAddPage = (req, res, next) => {
 
     // ADD YOUR CODE HERE
+    let newBook = Book({
+        Title: req.body.Title,
+        Description: req.body.Description,
+        Price: req.body.Price,
+        Author: req.body.Author,
+        Genre: req.body.Genre
+    });
+
+    Book.create(newBook, (err, Book) => {
+        if(err){
+            console.log(err);
+            res.end(err);
+        }else{
+            res.redirect('/book/list');
+        }
+    })
+
+
 
 }
 
@@ -59,6 +79,17 @@ module.exports.processAddPage = (req, res, next) => {
 module.exports.displayEditPage = (req, res, next) => {
     
     // ADD YOUR CODE HERE
+    let id = req.params.id;
+
+    Book.findById(id, (err, editedBook) => {
+        if(err){
+            console.log(err);
+            res.end(err);
+        }else{
+            res.render('book/add_edit', {title:"Edit Book",
+             book: editedBook});
+        }
+    });
 
 }
 
@@ -66,6 +97,26 @@ module.exports.displayEditPage = (req, res, next) => {
 module.exports.processEditPage = (req, res, next) => {
     
     // ADD YOUR CODE HERE
+    let id = req.params.id;
+
+    let updatedBook = Book({
+        _id: id,
+        Title: req.body.Title,
+        Description: req.body.Description,
+        Price: req.body.Price,
+        Author: req.body.Author,
+        Genre: req.body.Genre
+    });
+
+    Book.updateOne({_id: id}, updatedBook, (err) =>{
+        if(err){
+            console.log(err);
+            res.end(err); 
+        }
+        else{
+            res.redirect('/book/list');
+        }
+    });
     
 }
 
@@ -74,4 +125,14 @@ module.exports.performDelete = (req, res, next) => {
     
     // ADD YOUR CODE HERE
 
+    let id = req.params.id;
+
+    Book.remove({_id: id}, (err) =>{
+        if(err){
+            console.log(err);
+            res.end(err);
+        }else{
+            res.redirect('/book/list');
+        }
+    });
 }
